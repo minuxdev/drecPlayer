@@ -1,7 +1,7 @@
 from PyQt5.QtGui import QIcon, QPicture, QPixmap
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
-# from pygame import mixer
+import pygame
 import sys
 
 class Window(QMainWindow):
@@ -10,7 +10,7 @@ class Window(QMainWindow):
         self.setWindowTitle("Drec Player")
         self.setMinimumSize(250,300)
 
-        self.setStyleSheet("QMainWindow {background-color: green}")
+        self.setStyleSheet("QMainWindow {background-color: black}")
         window = QWidget()
         self.vbox = QVBoxLayout()
         window.setLayout(self.vbox)
@@ -38,6 +38,7 @@ class Window(QMainWindow):
         buttonGroup.setMaximumHeight(50)
         hbox = QHBoxLayout()
         buttonGroup.setLayout(hbox)
+        # hbox.addStretch(5)
 
         self.back = QPushButton()
         self.back.setStyleSheet(them)
@@ -60,6 +61,7 @@ class Window(QMainWindow):
         self.Next.setIcon(QIcon("next.icon"))
         hbox.addWidget(self.Next)
 
+        # hbox.addStretch(5)
         self.vbox.addWidget(buttonGroup)
     
 
@@ -67,13 +69,50 @@ class Player(Window):
     def __init__(self):
         super().__init__()
         self.win = Window()
-        
-        
-        self.win.play.clicked.connect(self.Play)
+    
+        pygame.init()
+        pygame.mixer.music.load('1. Oh Boy.wav')
+        # self.pymodule = mixer.music()
+        self.win.play.clicked.connect(self.Main)
+        self.win.pause.clicked.connect(self.Main)
+        self.win.Next.clicked.connect(self.Main)
+        self.win.back.clicked.connect(self.Main)
 
-    def Play(self):
-        print("Im Playing")
 
+    def Main(self):
+        src = self.win.sender()
+
+        if src == self.win.play:
+            print("Play button was triggered")
+            self.Play()
+
+        elif src == self.win.pause:
+            # print("Pause button was triggered")
+            self.status = pygame.mixer.music.get_busy()
+
+            if self.status == 0:
+                print("Unpausing")
+                self.UnPause()
+            else:
+                print("Pausing")
+                self.Pause()
+        
+        elif src == self.win.back:
+            print("Back button was triggered")
+
+        else:
+            print("Next button was triggered")
+
+
+    def Play(self): 
+        pygame.mixer.music.play()
+        
+    def Pause(self):
+        pygame.mixer.music.pause()
+
+    def UnPause(self):
+        pygame.mixer.music.unpause()
+             
 
 
 if __name__ == "__main__":
